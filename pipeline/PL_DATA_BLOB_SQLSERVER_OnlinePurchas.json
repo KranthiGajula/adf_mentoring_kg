@@ -211,11 +211,8 @@
 					"secureInput": false
 				},
 				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[dbo].[spPopulateOnlineService]"
-				},
 				"linkedServiceName": {
-					"referenceName": "LS_ASQL_Movie",
+					"referenceName": "LS_githubchangestesting",
 					"type": "LinkedServiceReference"
 				}
 			},
