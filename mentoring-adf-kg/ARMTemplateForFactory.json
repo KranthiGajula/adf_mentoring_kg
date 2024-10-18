@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'functionKey' of 'LS_AFN_UpdateWatermark'"
 		},
+		"LS_githubchangestesting_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_githubchangestesting'"
+		},
 		"LS_ABLB_Movie_properties_typeProperties_sasUri_secretName": {
 			"type": "string",
 			"defaultValue": "blbstoragesas"
@@ -74,6 +78,18 @@
 		"LS_SQL_CinemaTickets_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "kranthi_gajula"
+		},
+		"LS_githubchangestesting_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "azure-mentoring-kg.database.windows.net"
+		},
+		"LS_githubchangestesting_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "movies"
+		},
+		"LS_githubchangestesting_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "kranthigajula"
 		}
 	},
 	"variables": {
@@ -4708,6 +4724,28 @@
 				"[concat(variables('factoryId'), '/datasets/DS_ASQL_DataMart_DimMovie')]",
 				"[concat(variables('factoryId'), '/datasets/DS_ASQL_DataMart_DimOnlineService')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_githubchangestesting')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('LS_githubchangestesting_properties_typeProperties_server')]",
+					"database": "[parameters('LS_githubchangestesting_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_githubchangestesting_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_githubchangestesting_password')]"
+					}
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

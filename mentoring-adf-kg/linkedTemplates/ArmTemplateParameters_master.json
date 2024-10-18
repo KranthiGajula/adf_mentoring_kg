@@ -8,6 +8,9 @@
 		"LS_AFN_UpdateWatermark_functionKey": {
 			"value": ""
 		},
+		"LS_githubchangestesting_password": {
+			"value": ""
+		},
 		"LS_ABLB_Movie_properties_typeProperties_sasUri_secretName": {
 			"value": "blbstoragesas"
 		},
@@ -55,6 +58,15 @@
 		},
 		"LS_SQL_CinemaTickets_properties_typeProperties_userName": {
 			"value": "kranthi_gajula"
+		},
+		"LS_githubchangestesting_properties_typeProperties_server": {
+			"value": "azure-mentoring-kg.database.windows.net"
+		},
+		"LS_githubchangestesting_properties_typeProperties_database": {
+			"value": "movies"
+		},
+		"LS_githubchangestesting_properties_typeProperties_userName": {
+			"value": "kranthigajula"
 		},
 		"containerUri": {
 			"value": ""
