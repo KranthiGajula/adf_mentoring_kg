@@ -1,0 +1,19 @@
+{
+	"name": "LS_ATBL_Watermark",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureTableStorage",
+		"typeProperties": {
+			"sasUri": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AKV",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "tblstorageonlinesas",
+				"secretVersion": "0c53c7aaed3f4e55bf6a69d6abf86dbd"
+			}
+		}
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"name": "SQLTOAQLTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PL_DATA_SQL_ASQL_Incremental",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 2,
+				"startTime": "2024-09-26T19:41:00",
+				"timeZone": "W. Europe Standard Time"
+			}
+		}
+	}
+}

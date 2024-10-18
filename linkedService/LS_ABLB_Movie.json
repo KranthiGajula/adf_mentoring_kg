@@ -1,0 +1,19 @@
+{
+	"name": "LS_ABLB_Movie",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AKV",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "blbstoragesas",
+				"secretVersion": "fac9aac3a47b4aa8a8fd0ab61abcfe86"
+			}
+		}
+	}
+}

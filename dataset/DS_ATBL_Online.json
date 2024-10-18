@@ -1,0 +1,16 @@
+{
+	"name": "DS_ATBL_Online",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ATBL_Watermark",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "Watermark"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

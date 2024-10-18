@@ -1,0 +1,25 @@
+{
+	"name": "LS_ASQL_DataMart",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "azure-mentoring-kg.database.windows.net",
+			"database": "DataMart",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "kranthigajula",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AKV",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "azsqldbsecret",
+				"secretVersion": "6c17b716c98342cbb0bf32c7b1255b9a"
+			}
+		}
+	}
+}

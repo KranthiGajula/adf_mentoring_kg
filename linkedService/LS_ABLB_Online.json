@@ -1,0 +1,19 @@
+{
+	"name": "LS_ABLB_Online",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AKV",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "blbstoragesasonline",
+				"secretVersion": "e85e5d8fae934d47824a82495d1dc570"
+			}
+		}
+	}
+}

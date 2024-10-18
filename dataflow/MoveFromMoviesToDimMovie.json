@@ -1,0 +1,159 @@
+{
+	"name": "MoveFromMoviesToDimMovie",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_Movies_tMovies",
+						"type": "DatasetReference"
+					},
+					"name": "tMovies"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_Movies_tMovieStatus",
+						"type": "DatasetReference"
+					},
+					"name": "tMovieStatus"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_Movies_Online_Service",
+						"type": "DatasetReference"
+					},
+					"name": "SourceForOnlineService"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_DataMart_DimMovie",
+						"type": "DatasetReference"
+					},
+					"name": "DataMartDimMovieSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_DataMart_DimOnlineService",
+						"type": "DatasetReference"
+					},
+					"name": "DatamartDimOnlineServiceSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Addcolumns"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "AddDateTimeColumns"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "AggregateUniqueServiceNames"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          MovieIdNK as integer,",
+				"          Title as string,",
+				"          ReleaseDate as date,",
+				"          Runtime as integer,",
+				"          MovieStatusId as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT [MovieIdNK]\\n      ,[Title]\\n       ,[ReleaseDate]\\n       ,[Runtime]\\n      ,[MovieStatusId]\\n  FROM [dbo].[tMovies]',",
+				"     format: 'query') ~> tMovies",
+				"source(output(",
+				"          MovieStatusId as integer,",
+				"          MovieStatusName as string,",
+				"          CreatedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> tMovieStatus",
+				"source(output(",
+				"          ServiceCode as string,",
+				"          ServiceId as integer,",
+				"          ServiceName as string,",
+				"          CreatedDate as timestamp,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> SourceForOnlineService",
+				"select1 derive(CreatedDate = currentUTC(),",
+				"          ModifiedDate = currentUTC()) ~> Addcolumns",
+				"tMovies, tMovieStatus join(tMovies@MovieStatusId == tMovieStatus@MovieStatusId,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          MovieIdNK,",
+				"          Title,",
+				"          ReleaseDate,",
+				"          Runtime,",
+				"          MovieStatusName",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"AggregateUniqueServiceNames derive(CreatedDate = currentUTC(),",
+				"          ModifiedDate = currentUTC()) ~> AddDateTimeColumns",
+				"AddDateTimeColumns select(mapColumn(",
+				"          ServiceCode,",
+				"          ServiceName,",
+				"          CreatedDate,",
+				"          ModifiedDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"SourceForOnlineService aggregate(groupBy(ServiceCode),",
+				"     ServiceName = first(ServiceName)) ~> AggregateUniqueServiceNames",
+				"Addcolumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          MovieIdNK,",
+				"          Title,",
+				"          ReleaseDate,",
+				"          Runtime,",
+				"          MovieStatus = MovieStatusName,",
+				"          CreatedDate,",
+				"          ModifiedDate",
+				"     )) ~> DataMartDimMovieSink",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> DatamartDimOnlineServiceSink"
+			]
+		}
+	}
+}

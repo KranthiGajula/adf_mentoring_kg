@@ -1,0 +1,72 @@
+{
+	"name": "PL_DATA_MasterPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyBlobToDataLake",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_DATA_Blob_DataLake",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "CopyDataLakeToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CopyBlobToDataLake",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_DATA_BLOB_SQLSERVER",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ArchiveProcessedFiles",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CopyDataLakeToSQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_DATA_Archive_Processed_Files",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-09-25T10:13:15Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

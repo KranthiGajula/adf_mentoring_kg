@@ -1,0 +1,66 @@
+{
+	"name": "PL_DATAFLOW_Fill_FactOnlineTable",
+	"properties": {
+		"activities": [
+			{
+				"name": "TruncateFactOnlineTable",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[spFactTables]"
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_ASQL_DataMart",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "FillFactOnlineMetadataTables",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "TruncateFactOnlineTable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_FillFactTables",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SrcTOnlinePurchase": {
+								"tableName": "tOnlinePurchase"
+							}
+						}
+					},
+					"integrationRuntime": {
+						"referenceName": "Azure-IR-M8",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-10-11T09:45:40Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,72 @@
+{
+	"name": "PL_Master_Online_Purchase",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetOnlinePurchasesDataLake",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_DATA_Blob_DataLake_Online",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "CopyFromBlobToAzureSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "GetOnlinePurchasesDataLake",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_DATA_BLOB_SQLSERVER_OnlinePurchas",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ArchiveProcessedFiles",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CopyFromBlobToAzureSQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_DATA_Archive_Online_Processed_Files",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-10-04T16:06:09Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

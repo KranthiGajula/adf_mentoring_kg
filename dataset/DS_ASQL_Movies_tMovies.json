@@ -1,0 +1,17 @@
+{
+	"name": "DS_ASQL_Movies_tMovies",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ASQL_Movie",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tMovies"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
