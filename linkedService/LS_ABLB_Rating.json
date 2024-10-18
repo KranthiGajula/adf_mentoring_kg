@@ -1,0 +1,19 @@
+{
+	"name": "LS_ABLB_Rating",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AKV",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "blbstorageau",
+				"secretVersion": "2af5f5e885ce439e83481b160461cac9"
+			}
+		}
+	}
+}

@@ -1,0 +1,6 @@
+{
+	"logicappsconnectionuri": {
+		"type": "string",
+		"value": "https://mentoring-key-vault-kg.vault.azure.net/secrets/logicappconnectionurl/6b67469448944df9966caaff61ea4dd5"
+	}
+}

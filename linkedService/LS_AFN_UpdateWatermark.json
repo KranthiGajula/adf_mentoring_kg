@@ -1,0 +1,13 @@
+{
+	"name": "LS_AFN_UpdateWatermark",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureFunction",
+		"typeProperties": {
+			"functionAppUrl": "https://updatewatermark.azurewebsites.net/api/UpdateWatermarkTable1",
+			"authentication": "MSI",
+			"resourceId": "53846840-51fd-43b0-bab3-cb7ba31e4df3"
+		}
+	}
+}

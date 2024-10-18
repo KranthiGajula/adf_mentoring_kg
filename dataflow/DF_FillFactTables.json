@@ -1,0 +1,187 @@
+{
+	"name": "DF_FillFactTables",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_Movies_Online_Purchase",
+						"type": "DatasetReference"
+					},
+					"name": "SrcTOnlinePurchase"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_DataMart_DimMovie",
+						"type": "DatasetReference"
+					},
+					"name": "SrcDimOnlineMovie"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_DataMart_DimOnlineService",
+						"type": "DatasetReference"
+					},
+					"name": "SrcDimOnlineService"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_Movies_Online_Service",
+						"type": "DatasetReference"
+					},
+					"name": "SrcTOnlineService"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_DataMart_FactOnlineService",
+						"type": "DatasetReference"
+					},
+					"name": "SinkIntoFactOnlineTable"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_ASQL_DataMart_FactMonthlySnapshot",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "JoinTOnlineTables"
+				},
+				{
+					"name": "JoinTOnlineAndDimTables"
+				},
+				{
+					"name": "TransformDateOfAColumn"
+				},
+				{
+					"name": "ColumnsDataToJoinAggregateData"
+				},
+				{
+					"name": "AggregateForTransactionAndPrice"
+				},
+				{
+					"name": "JoinAggregateAndOriginalColumns"
+				},
+				{
+					"name": "FinalColumsBeforeSink"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ServiceId as integer,",
+				"          MovieId as integer,",
+				"          Price as decimal(4,1),",
+				"          TransactionId as string,",
+				"          TransactionDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: '  SELECT\\n       [ServiceId]\\n      ,[MovieId]\\n      ,[Price]\\n      ,[TransactionId]\\n      ,[TransactionDate]\\n  FROM [dbo].[tOnlinePurchase]',",
+				"     format: 'query') ~> SrcTOnlinePurchase",
+				"source(output(",
+				"          MovieKey as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: '  SELECT\\n       [MovieKey]\\n  FROM [dbo].[DimMovie]',",
+				"     format: 'query') ~> SrcDimOnlineMovie",
+				"source(output(",
+				"          ServiceKey as integer,",
+				"          ServiceCode as string,",
+				"          ServiceName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT [ServiceKey]\\n      ,[ServiceCode]\\n      ,[ServiceName]\\n  FROM [dbo].[DimOnlineService]',",
+				"     format: 'query') ~> SrcDimOnlineService",
+				"source(output(",
+				"          ServiceId as integer,",
+				"          ServiceCode as string,",
+				"          ServiceName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT [ServiceId]\\n      ,[ServiceCode]\\n      ,[ServiceName]\\n  FROM [dbo].[tOnlineService]',",
+				"     format: 'query') ~> SrcTOnlineService",
+				"SrcTOnlinePurchase, SrcTOnlineService join(SrcTOnlinePurchase@ServiceId == SrcTOnlineService@ServiceId,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinTOnlineTables",
+				"JoinTOnlineTables, SrcDimOnlineService join(SrcTOnlineService@ServiceCode == SrcDimOnlineService@ServiceCode",
+				"     && SrcTOnlineService@ServiceName == SrcDimOnlineService@ServiceName,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinTOnlineAndDimTables",
+				"JoinTOnlineAndDimTables derive(TransactionDate = toString(TransactionDate, 'YYYYMMdd')) ~> TransformDateOfAColumn",
+				"JoinTOnlineAndDimTables derive(TransactionDate = toString(TransactionDate, 'YYYYMM')) ~> ColumnsDataToJoinAggregateData",
+				"ColumnsDataToJoinAggregateData aggregate(groupBy(SrcTOnlineService@ServiceId),",
+				"     Price = sum(Price),",
+				"          TransactionId = count(TransactionId)) ~> AggregateForTransactionAndPrice",
+				"AggregateForTransactionAndPrice, ColumnsDataToJoinAggregateData join(AggregateForTransactionAndPrice@ServiceId == SrcTOnlinePurchase@ServiceId,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinAggregateAndOriginalColumns",
+				"JoinAggregateAndOriginalColumns select(mapColumn(",
+				"          PurchaseAmount = AggregateForTransactionAndPrice@Price,",
+				"          PurchaseQuantity = AggregateForTransactionAndPrice@TransactionId,",
+				"          MonthKey = TransactionDate,",
+				"          OnlineServiceKey = ServiceKey",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FinalColumsBeforeSink",
+				"TransformDateOfAColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ServiceId = SrcTOnlinePurchase@ServiceId,",
+				"          MovieKey = MovieId,",
+				"          Price,",
+				"          TransactionId,",
+				"          DateKey = TransactionDate,",
+				"          ServiceId = SrcTOnlineService@ServiceId,",
+				"          ServiceCode = SrcTOnlineService@ServiceCode,",
+				"          ServiceName = SrcTOnlineService@ServiceName,",
+				"          OnlineServiceKey = ServiceKey,",
+				"          ServiceCode = SrcDimOnlineService@ServiceCode,",
+				"          ServiceName = SrcDimOnlineService@ServiceName",
+				"     )) ~> SinkIntoFactOnlineTable",
+				"FinalColumsBeforeSink sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          PurchaseAmount,",
+				"          PurchaseQuantity,",
+				"          MonthKey,",
+				"          OnlineServiceKey",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

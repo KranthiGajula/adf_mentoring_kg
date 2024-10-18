@@ -1,0 +1,61 @@
+{
+	"name": "PL_DATAFLOW_OnlineService",
+	"properties": {
+		"activities": [
+			{
+				"name": "DataFlowOnlineService",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DeleteDimMovieOnlineServiceTables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "MoveFromMoviesToDimMovie",
+						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "Azure-IR-M8",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DeleteDimMovieOnlineServiceTables",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[spDeleteRowsFromDimOnlineService]"
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_ASQL_DataMart",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-10-09T13:31:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

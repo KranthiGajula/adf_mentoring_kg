@@ -1,0 +1,29 @@
+{
+	"name": "LS_SQL_CinemaTickets",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "EPNLHOOW004C",
+			"database": "CinemaTickets",
+			"encrypt": "optional",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "kranthi_gajula",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AKV",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "sqldbsecret",
+				"secretVersion": "2bb8e05543c146c98be5b9da8339f781"
+			}
+		},
+		"connectVia": {
+			"referenceName": "LocalIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

@@ -1,0 +1,78 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "mentoring-adf-kg"
+		},
+		"LS_AFN_UpdateWatermark_functionKey": {
+			"value": ""
+		},
+		"LS_githubchangestesting_password": {
+			"value": ""
+		},
+		"LS_ABLB_Movie_properties_typeProperties_sasUri_secretName": {
+			"value": "blbstoragesas"
+		},
+		"LS_ABLB_Online_properties_typeProperties_sasUri_secretName": {
+			"value": "blbstoragesasonline"
+		},
+		"LS_ABLB_Rating_properties_typeProperties_sasUri_secretName": {
+			"value": "blbstorageau"
+		},
+		"LS_ADLS_DataLake_properties_typeProperties_url": {
+			"value": "https://azurementoringdatalakekg.dfs.core.windows.net"
+		},
+		"LS_AFN_UpdateWatermark_properties_typeProperties_functionAppUrl": {
+			"value": "https://updatewatermark.azurewebsites.net/api/UpdateWatermarkTable1"
+		},
+		"LS_AKV_properties_typeProperties_baseUrl": {
+			"value": "https://mentoring-key-vault-kg.vault.azure.net/"
+		},
+		"LS_ASQL_DataMart_properties_typeProperties_server": {
+			"value": "azure-mentoring-kg.database.windows.net"
+		},
+		"LS_ASQL_DataMart_properties_typeProperties_database": {
+			"value": "DataMart"
+		},
+		"LS_ASQL_DataMart_properties_typeProperties_userName": {
+			"value": "kranthigajula"
+		},
+		"LS_ASQL_Movie_properties_typeProperties_server": {
+			"value": "azure-mentoring-kg.database.windows.net"
+		},
+		"LS_ASQL_Movie_properties_typeProperties_database": {
+			"value": "movies"
+		},
+		"LS_ASQL_Movie_properties_typeProperties_userName": {
+			"value": "kranthigajula"
+		},
+		"LS_ATBL_Watermark_properties_typeProperties_sasUri_secretName": {
+			"value": "tblstorageonlinesas"
+		},
+		"LS_SQL_CinemaTickets_properties_typeProperties_server": {
+			"value": "EPNLHOOW004C"
+		},
+		"LS_SQL_CinemaTickets_properties_typeProperties_database": {
+			"value": "CinemaTickets"
+		},
+		"LS_SQL_CinemaTickets_properties_typeProperties_userName": {
+			"value": "kranthi_gajula"
+		},
+		"LS_githubchangestesting_properties_typeProperties_server": {
+			"value": "azure-mentoring-kg.database.windows.net"
+		},
+		"LS_githubchangestesting_properties_typeProperties_database": {
+			"value": "movies"
+		},
+		"LS_githubchangestesting_properties_typeProperties_userName": {
+			"value": "kranthigajula"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

@@ -1,0 +1,132 @@
+{
+	"name": "PL_DATA_Blob_DataLake_Online",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyFromBlobOnlineToDataLakeOnline",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Lookup Current Watermark",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"modifiedDatetimeStart": {
+								"value": "@activity('Lookup Current Watermark').output.firstRow.PipelineRuntime",
+								"type": "Expression"
+							},
+							"modifiedDatetimeEnd": {
+								"value": "@utcNow()",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.json",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"parallelCopies": 32,
+					"dataIntegrationUnits": 4
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_ABLB_Online",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_ADLS_Online",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Lookup Current Watermark",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureTableSource",
+						"azureTableSourceIgnoreTableNotFound": false
+					},
+					"dataset": {
+						"referenceName": "DS_ATBL_Online",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Update Blob Watermark Table",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "CopyFromBlobOnlineToDataLakeOnline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "PUT",
+					"headers": {
+						"Content-Type": "application/json",
+						"Accept": "application/json"
+					},
+					"url": "https://azurementoringstoragekg.table.core.windows.net/Watermark(PartitionKey='Watermark',RowKey='Runtime')?sp=raud&st=2024-10-02T11:24:29Z&se=2024-12-20T12:24:00Z&spr=https&sv=2022-11-02&sig=kcMTUrzeulT6IV7UvWog99wOq8aE50rcVM2fhx7qLL4%3D&tn=Watermark",
+					"body": {
+						"PartitionKey": "Watermark",
+						"RowKey": "Runtime",
+						"PipelineRuntime": "@utcnow()"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-10-05T09:34:15Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

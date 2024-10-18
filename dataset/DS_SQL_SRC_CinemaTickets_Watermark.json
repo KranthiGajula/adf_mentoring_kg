@@ -1,0 +1,17 @@
+{
+	"name": "DS_SQL_SRC_CinemaTickets_Watermark",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQL_CinemaTickets",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "watermarktable"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
